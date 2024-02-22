@@ -157,7 +157,7 @@ No known bugs at this time.
 Alexa Orrico - [Github](https://github.com/alexaorrico) / [Twitter](https://twitter.com/alexa_orrico)  
 Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang)
 
-Maamoun Chebbi - [Github](https://github.com/watch14)
+Maamoun Chebbi - [Github](https://github.com/watch14) \
 Iheb Chaoued - [Github](https://github.com/IhebChaoued)
 
 ## License
