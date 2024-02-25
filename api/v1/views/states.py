@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-View for State objects that handles all default RESTFul API actions.
+view state objects / object
 """
 from models import storage
 from api.v1.views import app_views
