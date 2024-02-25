@@ -1,21 +1,21 @@
 #!/usr/bin/python3
-""" retrive + delete + create + update -> states """
+""" retrive + delet + create + update -> states """
 
 from api.v1.views import app_views
-from flask import abort, jsonify, Flask, request
-from models.state import State
+from flask import Flask, jsonify, request, abort
 from models import storage
+from models.state import State
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
-def all_states():
+def get_states():
     """Retrieves the list of all State objects"""
     states_list = [state.to_dict() for state in storage.all(State).values()]
     return jsonify(states_list)
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
-def retive_state(state_id):
+def get_state(state_id):
     """Retrieves a State object"""
     state = storage.get(State, state_id)
     if state is None:
@@ -31,6 +31,7 @@ def delete_state(state_id):
     if state is None:
         abort(404)
     storage.delete(state)
+    storage.save()
     return jsonify({})
 
 
