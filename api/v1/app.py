@@ -1,11 +1,13 @@
 #!/usr/bin/python3
-""" flask_app_AirBnB"""
+"""
+flask_app_AirBnB
+"""
 
 from api.v1.views import app_views
 from flask import Flask, jsonify
 from flask_cors import CORS
 from models import storage
-import os
+from os import getenv
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
