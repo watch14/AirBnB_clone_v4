@@ -4,7 +4,7 @@ Module for handling State objects that handles all default RESTFul API actions
 """
 
 from api.v1.views import app_views
-from flask import jsonify, request, abort
+from flask import Flask, jsonify, request, abort
 from models import storage
 from models.state import State
 
@@ -33,7 +33,7 @@ def delete_state(state_id):
         abort(404)
     storage.delete(state)
     storage.save()
-    return jsonify({}), 200  # Return 200 for a successful deletion
+    return jsonify({})
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
