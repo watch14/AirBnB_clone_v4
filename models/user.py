@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ holds class User"""
+import hashlib
 import models
 from models.base_model import BaseModel, Base
 from os import getenv
@@ -35,5 +36,4 @@ class User(BaseModel, Base):
     @password.setter
     def password(self, value):
         """ Setter for password """
-        if value:
-            self._password = md5(value.encode()).hexdigest()
+        self._password = hashlib.md5(value.encode()).hexdigest()
