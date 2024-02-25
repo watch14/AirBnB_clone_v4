@@ -1,4 +1,4 @@
-#!/usr/bin/python3xx
+#!/usr/bin/python3
 """ index """
 
 from models import storage
