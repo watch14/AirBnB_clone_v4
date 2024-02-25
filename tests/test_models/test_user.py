@@ -130,3 +130,11 @@ class TestUser(unittest.TestCase):
         user = User()
         string = "[User] ({}) {}".format(user.id, user.__dict__)
         self.assertEqual(string, str(user))
+
+    def test_password_hashing(self):
+        """Test that password is hashed when set"""
+        user = User()
+        password = "password123"
+        user.password = password
+        hashed_password = hashlib.md5(password.encode()).hexdigest()
+        self.assertEqual(user.password, hashed_password)
