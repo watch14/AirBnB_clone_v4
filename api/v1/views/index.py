@@ -13,25 +13,21 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route("/status", strict_slashes=False)
+@app_views.route('/status')
 def return_status():
     """ return status"""
-    return jsonify(status="ok")
+    return jsonify({'status': 'ok'})
 
 
 @app_views.route("/stats", strict_slashes=False)
 def counter():
     """ counter """
     all_c = {
-                "amenities": Amenity,
-                "cities": City,
-                "places": Place,
-                "reviews": Review,
-                "states": State,
-                "users": User
+                "amenities": storage.count(Amenity),
+                "cities": storage.count(City),
+                "places": storage.count(Place),
+                "reviews": storage.count(Review),
+                "states": storage.count(State),
+                "users": storage.count(User),
             }
-
-    for key in all_c:
-        all_c[key] = storage.count(all_c[key])
-
     return jsonify(all_c)
