@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Module for handling State objects that handles all default RESTFul API actions
+view object/ objects
 """
 
 from api.v1.views import app_views
