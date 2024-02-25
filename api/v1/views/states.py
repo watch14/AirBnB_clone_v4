@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Module for handling State objects that handles all default RESTFul API actions
-"""
+""" retrive + delet + create + update -> states """
 
 from api.v1.views import app_views
 from flask import Flask, jsonify, request, abort
@@ -25,7 +23,8 @@ def get_state(state_id):
     return jsonify(state.to_dict())
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_state(state_id):
     """Deletes a State object"""
     state = storage.get(State, state_id)
