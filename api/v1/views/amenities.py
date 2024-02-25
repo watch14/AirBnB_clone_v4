@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Handles RESTful API actions for Amenity objects"""
+"""
+rest api Amenity objects
+"""
 
 from api.v1.views import app_views
 from flask import abort, jsonify, request

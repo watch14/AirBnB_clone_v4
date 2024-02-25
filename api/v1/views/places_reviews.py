@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""Handles RESTful API actions for Review objects"""
+"""
+rest API for Review objects"""
 
 from api.v1.views import app_views
 from flask import abort, jsonify, request
