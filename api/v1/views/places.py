@@ -82,3 +82,26 @@ def update_place(place_id):
             setattr(place, key, value)
     storage.save()
     return jsonify(place.to_dict()), 200
+
+
+@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
+def places_search():
+    """Search for places based on the JSON body"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Not a JSON"}), 400
+
+    states = data.get('states', [])
+    cities = data.get('cities', [])
+    amenities = data.get('amenities', [])
+
+    # Your search logic here
+
+    # Sample response for testing
+    result = [
+        {"name": "Place 1"},
+        {"name": "Place 2"},
+        # Add more places as per your search logic
+    ]
+
+    return jsonify(result)
