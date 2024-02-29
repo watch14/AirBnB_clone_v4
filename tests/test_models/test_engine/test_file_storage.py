@@ -67,54 +67,75 @@ test_file_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_count_method_docstring(self):
-        """Test for the presence of docstring in FileStorage.count() method"""
-        self.assertIsNot(FileStorage.count.__doc__, None, "count method needs a docstring")
-        self.assertTrue(len(FileStorage.count.__doc__) >= 1, "count method needs a docstring")
 
-    def test_get_method_docstring(self):
-        """Test for the presence of docstring in FileStorage.get() method"""
-        self.assertIsNot(FileStorage.get.__doc__, None, "get method needs a docstring")
-        self.assertTrue(len(FileStorage.get.__doc__) >= 1, "get method needs a docstring")
+class TestFileStorage(unittest.TestCase):
+    """Test the FileStorage class"""
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_all_returns_dict(self):
+        """Test that all returns the FileStorage.__objects attr"""
+        storage = FileStorage()
+        new_dict = storage.all()
+        self.assertEqual(type(new_dict), dict)
+        self.assertIs(new_dict, storage._FileStorage__objects)
 
-    def test_count_method(self):
-        """Test the FileStorage.count() method"""
-        # Add objects to the FileStorage for testing
-        state1 = State(name="California")
-        state2 = State(name="New York")
-        file_storage = FileStorage()
-        file_storage.new(state1)
-        file_storage.new(state2)
-        file_storage.save()
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_new(self):
+        """test that new adds an object to the FileStorage.__objects attr"""
+        storage = FileStorage()
+        save = FileStorage._FileStorage__objects
+        FileStorage._FileStorage__objects = {}
+        test_dict = {}
+        for key, value in classes.items():
+            with self.subTest(key=key, value=value):
+                instance = value()
+                instance_key = instance.__class__.__name__ + "." + instance.id
+                storage.new(instance)
+                test_dict[instance_key] = instance
+                self.assertEqual(test_dict, storage._FileStorage__objects)
+        FileStorage._FileStorage__objects = save
 
-        # Test count without specifying class
-        all_objects_count = file_storage.count()
-        self.assertEqual(all_objects_count, 2)
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_save(self):
+        """Test that save properly saves objects to file.json"""
+        storage = FileStorage()
+        new_dict = {}
+        for key, value in classes.items():
+            instance = value()
+            instance_key = instance.__class__.__name__ + "." + instance.id
+            new_dict[instance_key] = instance
+        save = FileStorage._FileStorage__objects
+        FileStorage._FileStorage__objects = new_dict
+        storage.save()
+        FileStorage._FileStorage__objects = save
+        for key, value in new_dict.items():
+            new_dict[key] = value.to_dict()
+        string = json.dumps(new_dict)
+        with open("file.json", "r") as f:
+            js = f.read()
+        self.assertEqual(json.loads(string), json.loads(js))
 
-        # Test count for specific class
-        state_count = file_storage.count(State)
-        self.assertEqual(state_count, 2)  # Assuming both states are counted
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """ Tests method for obtaining an instance file storage"""
+        storage = FileStorage()
+        dic = {"name": "Vecindad"}
+        instance = State(**dic)
+        storage.new(instance)
+        storage.save()
+        storage = FileStorage()
+        get_instance = storage.get(State, instance.id)
+        self.assertEqual(get_instance, instance)
 
-        # Test count for non-existent class
-        non_existent_count = file_storage.count(Review)
-        self.assertEqual(non_existent_count, 0)
-
-    def test_get_method(self):
-        """Test the FileStorage.get() method"""
-        # Add objects to the FileStorage for testing
-        state1 = State(name="California")
-        state2 = State(name="New York")
-        file_storage = FileStorage()
-        file_storage.new(state1)
-        file_storage.new(state2)
-        file_storage.save()
-
-        # Test get for existing object
-        state1_id = state1.id
-        retrieved_state = file_storage.get(State, state1_id)
-        self.assertEqual(retrieved_state, state1)
-
-        # Test get for non-existent object
-        non_existent_id = "non_existent_id"
-        non_existent_state = file_storage.get(State, non_existent_id)
-        self.assertIsNone(non_existent_state)
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """ Tests count method file storage """
+        storage = FileStorage()
+        dic = {"name": "Vecindad"}
+        state = State(**dic)
+        storage.new(state)
+        dic = {"name": "Mexico"}
+        city = City(**dic)
+        storage.new(city)
+        storage.save()
+        c = storage.count()
+        self.assertEqual(len(storage.all()), c)

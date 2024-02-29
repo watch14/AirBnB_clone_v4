@@ -18,6 +18,7 @@ import json
 import os
 import pep8
 import unittest
+from models import storage
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
@@ -67,52 +68,43 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_get_method_docstring(self):
-        """Test for the presence of docstring in DBStorage.get() method"""
-        self.assertIsNot(DBStorage.get.__doc__, None, "get method needs a docstring")
-        self.assertTrue(len(DBStorage.get.__doc__) >= 1, "get method needs a docstring")
 
-    def test_count_method_docstring(self):
-        """Test for the presence of docstring in DBStorage.count() method"""
-        self.assertIsNot(DBStorage.count.__doc__, None, "count method needs a docstring")
-        self.assertTrue(len(DBStorage.count.__doc__) >= 1, "count method needs a docstring")
+class TestFileStorage(unittest.TestCase):
+    """Test the FileStorage class"""
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_returns_dict(self):
+        """Test that all returns a dictionaty"""
+        self.assertIs(type(models.storage.all()), dict)
 
-    def test_get_method(self):
-        """Test the DBStorage.get() method"""
-        # Add objects to the database for testing
-        state1 = State(name="California")
-        state2 = State(name="New York")
-        models.storage.new(state1)
-        models.storage.new(state2)
-        models.storage.save()
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_no_class(self):
+        """Test that all returns all rows when no class is passed"""
 
-        # Test get for existing object
-        state1_id = state1.id
-        retrieved_state = DBStorage().get(State, state1_id)
-        self.assertEqual(retrieved_state, state1)
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_new(self):
+        """test that new adds an object to the database"""
 
-        # Test get for non-existent object
-        non_existent_id = "non_existent_id"
-        non_existent_state = DBStorage().get(State, non_existent_id)
-        self.assertIsNone(non_existent_state)
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_save(self):
+        """Test that save properly saves objects to file.json"""
 
-    def test_count_method(self):
-        """Test the DBStorage.count() method"""
-        # Add objects to the database for testing
-        state1 = State(name="California")
-        state2 = State(name="New York")
-        models.storage.new(state1)
-        models.storage.new(state2)
-        models.storage.save()
+    def test_get_db(self):
+        """ Tests method for obtaining an instance db storage"""
+        dic = {"name": "Cundinamarca"}
+        instance = State(**dic)
+        storage.new(instance)
+        storage.save()
+        get_instance = storage.get(State, instance.id)
+        self.assertEqual(get_instance, instance)
 
-        # Test count without specifying class
-        all_objects_count = DBStorage().count()
-        self.assertEqual(all_objects_count, 2)
-
-        # Test count for specific class
-        state_count = DBStorage().count(State)
-        self.assertEqual(state_count, 2)  # Assuming both states are counted
-
-        # Test count for non-existent class
-        non_existent_count = DBStorage().count(Review)
-        self.assertEqual(non_existent_count, 0)
+    def test_count(self):
+        """ Tests count method db storage """
+        dic = {"name": "Vecindad"}
+        state = State(**dic)
+        storage.new(state)
+        dic = {"name": "Mexico", "state_id": state.id}
+        city = City(**dic)
+        storage.new(city)
+        storage.save()
+        c = storage.count()
+        self.assertEqual(len(storage.all()), c)

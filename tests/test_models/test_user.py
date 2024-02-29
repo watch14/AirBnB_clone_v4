@@ -31,6 +31,8 @@ class TestUserDocs(unittest.TestCase):
         """Test that tests/test_models/test_user.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_user.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
     def test_user_module_docstring(self):
         """Test for the user.py module docstring"""
@@ -77,8 +79,11 @@ class TestUser(unittest.TestCase):
     def test_password_attr(self):
         """Test that User has attr password, and it's an empty string"""
         user = User()
+        self.assertTrue(hasattr(user, "password"))
         if models.storage_t == 'db':
             self.assertEqual(user.password, None)
+        else:
+            self.assertEqual(user.password, "")
 
     def test_first_name_attr(self):
         """Test that User has attr first_name, and it's an empty string"""
@@ -125,9 +130,3 @@ class TestUser(unittest.TestCase):
         user = User()
         string = "[User] ({}) {}".format(user.id, user.__dict__)
         self.assertEqual(string, str(user))
-
-    def test_password_hashing(self):
-        """Test that password is hashed when set"""
-        user = User()
-        password = "password123"
-        user.password = password
